@@ -1,3 +1,644 @@
-<html>
-  This is a test!
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+        />
+        <title>LMDHF 2026 — Inauguration</title>
+
+        <!--
+  ============================================================================
+  LMDHF 2026 — Digital Inauguration Curtain Reveal
+  ----------------------------------------------------------------------------
+  Single self-contained file. No build step, no network dependency at showtime.
+  Open this file in any modern browser (F11 for fullscreen on a projector).
+
+  >>> TO USE YOUR REAL BANNER <<<
+  Drop your artwork (e.g. banner.jpg) next to this file, then replace the
+  `background:` line inside the `.banner` rule below with:
+
+      background: url('banner.jpg') center / cover no-repeat;
+
+  Everything else stays the same. The dummy gradient is only a placeholder.
+  ============================================================================
+-->
+
+        <style>
+            :root {
+                /* Emerald velvet */
+                --em-crease: #04180f;
+                --em-dark: #0a3324;
+                --em-mid: #12543a;
+                --em-ridge: #2a8f63;
+                --em-hi: #45b985;
+                /* Gold trim */
+                --gold-d: #8a6a1b;
+                --gold: #d4af37;
+                --gold-l: #f6e27a;
+                --gold-hi: #fff6c8;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                background: #000;
+                overflow: hidden;
+                font-family:
+                    Georgia, "Playfair Display", "Times New Roman", serif;
+            }
+
+            /* ===== Stage — fills the viewport, adapts to any screen ===== */
+            .stage {
+                position: fixed;
+                inset: 0;
+                overflow: hidden;
+                perspective: 1400px;
+                background: #000;
+            }
+
+            /* ===== Revealed background banner (behind the curtain) ===== */
+            .banner {
+                position: absolute;
+                inset: 0;
+                z-index: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                /* --- DUMMY PLACEHOLDER: replace this line with your real artwork (see note above) --- */
+                background: url("banner.jpeg") center / cover no-repeat;
+                /* start slightly zoomed + dim; settles as it is revealed */
+                transform: scale(1.08);
+                filter: brightness(0.55) saturate(0.9);
+            }
+            .banner__title {
+                font-size: clamp(2.4rem, 9vw, 8rem);
+                letter-spacing: 0.06em;
+                color: var(--gold-l);
+                text-shadow:
+                    0 2px 30px rgba(0, 0, 0, 0.6),
+                    0 0 2px rgba(0, 0, 0, 0.5);
+            }
+            .banner__sub {
+                margin-top: 1.2rem;
+                font-size: clamp(0.8rem, 2vw, 1.3rem);
+                letter-spacing: 0.35em;
+                text-transform: uppercase;
+                color: rgba(246, 226, 122, 0.65);
+            }
+            .banner__rule {
+                width: min(38vw, 420px);
+                height: 2px;
+                margin: 1.6rem 0 0.2rem;
+                background: linear-gradient(
+                    90deg,
+                    transparent,
+                    var(--gold),
+                    transparent
+                );
+            }
+
+            /* ===== Curtain container ===== */
+            .curtain {
+                position: absolute;
+                inset: 0;
+                z-index: 10;
+            }
+
+            /* ===== Panels (two halves, overlap slightly at the center seam) ===== */
+            .panel {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 52%;
+                z-index: 10;
+                will-change: transform;
+                backface-visibility: hidden;
+            }
+            .panel.left {
+                left: 0;
+                transform-origin: left center;
+                box-shadow: 14px 0 45px rgba(0, 0, 0, 0.55);
+            }
+            .panel.right {
+                right: 0;
+                transform-origin: right center;
+                box-shadow: -14px 0 45px rgba(0, 0, 0, 0.55);
+            }
+
+            /* Inner drape — carries the subtle idle sway. Kept OFF the outer panel so the
+     opening draw and the ambient sway never fight over the same transform; the
+     sway keeps breathing right through the opening = seamless, never a snap. */
+            .drape {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                transform-origin: top center;
+                will-change: transform;
+                animation: drapeSway var(--sway-t, 9s) ease-in-out
+                    var(--sway-d, 0s) infinite alternate;
+            }
+            .panel.right .drape {
+                flex-direction: row-reverse;
+            }
+
+            /* vertical depth: shadow under the valance + pooling at the floor */
+            .panel::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                z-index: 2;
+                background: linear-gradient(
+                    180deg,
+                    rgba(0, 0, 0, 0.45) 0%,
+                    rgba(0, 0, 0, 0) 16%,
+                    rgba(0, 0, 0, 0) 80%,
+                    rgba(0, 0, 0, 0.55) 100%
+                );
+            }
+
+            /* gold braided leading edge (the inner edge that leads the opening) */
+            .panel::after {
+                content: "";
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 1.5%;
+                z-index: 3;
+                background:
+                    repeating-linear-gradient(
+                        0deg,
+                        rgba(0, 0, 0, 0.18) 0 3px,
+                        transparent 3px 8px
+                    ),
+                    linear-gradient(
+                        90deg,
+                        var(--gold-d),
+                        var(--gold-l) 45%,
+                        var(--gold) 60%,
+                        var(--gold-d)
+                    );
+                box-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
+            }
+            .panel.left::after {
+                right: 0;
+            }
+            .panel.right::after {
+                left: 0;
+            }
+
+            /* ===== Individual velvet folds ===== */
+            .fold {
+                --ridge: 50%; /* where the light catches — varied per fold in JS */
+                --bri: 1; /* per-fold brightness — varied per fold in JS */
+                flex: 1 1 0;
+                position: relative;
+                overflow: hidden;
+                background: linear-gradient(
+                    90deg,
+                    var(--em-crease) 0%,
+                    var(--em-dark) 13%,
+                    var(--em-mid) calc(var(--ridge) - 12%),
+                    var(--em-ridge) var(--ridge),
+                    var(--em-mid) calc(var(--ridge) + 12%),
+                    var(--em-dark) 87%,
+                    var(--em-crease) 100%
+                );
+                /* soften the two edges of every fold into creases */
+                box-shadow:
+                    inset -7px 0 14px -7px rgba(0, 0, 0, 0.85),
+                    inset 7px 0 14px -7px rgba(0, 0, 0, 0.85);
+                filter: brightness(var(--bri));
+                /* each fold breathes on its own rhythm so the velvet never looks uniform */
+                animation: foldBreathe var(--fold-t, 5s) ease-in-out
+                    var(--fold-d, 0s) infinite alternate;
+            }
+            /* travelling sheen — light drifts down each fold, staggered = rippling velvet */
+            .fold::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: -40%;
+                height: 60%;
+                background: linear-gradient(
+                    180deg,
+                    transparent,
+                    rgba(255, 255, 255, 0.1),
+                    transparent
+                );
+                opacity: 0;
+                animation: sheen 9s ease-in-out infinite;
+                animation-delay: calc(var(--i, 0) * -1.15s);
+            }
+
+            /* ===== Valance (gold pelmet across the top) ===== */
+            .valance {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 15%;
+                z-index: 20;
+                background: linear-gradient(
+                    180deg,
+                    var(--gold-l) 0%,
+                    var(--gold) 42%,
+                    var(--gold-d) 100%
+                );
+                box-shadow:
+                    0 8px 22px rgba(0, 0, 0, 0.5),
+                    inset 0 3px 0 rgba(255, 255, 255, 0.35);
+            }
+            .valance::before {
+                /* soft velvet-green shading so it reads as fabric, not a flat bar */
+                content: "";
+                position: absolute;
+                inset: 0;
+                background:
+                    radial-gradient(
+                        120% 160% at 50% -30%,
+                        rgba(255, 255, 255, 0.4),
+                        transparent 45%
+                    ),
+                    linear-gradient(
+                        180deg,
+                        transparent 55%,
+                        rgba(74, 52, 10, 0.5)
+                    );
+            }
+            .valance::after {
+                /* scalloped gold beads hanging below the valance */
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -2.4vmin;
+                height: 5vmin;
+                background: radial-gradient(
+                    circle at 50% 0,
+                    var(--gold-l) 0 1.1vmin,
+                    var(--gold) 1.1vmin 1.7vmin,
+                    transparent 1.8vmin
+                );
+                background-size: 3.4vmin 5vmin;
+                background-repeat: repeat-x;
+                filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.45));
+            }
+
+            /* ===== Decorative hanging tassels ===== */
+            .tassel {
+                position: absolute;
+                top: 14%;
+                width: 1.1vmin;
+                z-index: 21;
+                transform-origin: top center;
+            }
+            .tassel.l {
+                left: 9%;
+                animation: swing 5.5s ease-in-out infinite alternate;
+            }
+            .tassel.r {
+                right: 9%;
+                animation: swing 6.2s ease-in-out infinite alternate reverse;
+            }
+            .tassel__cord {
+                width: 0.5vmin;
+                height: 9vmin;
+                margin: 0 auto;
+                background: linear-gradient(
+                    180deg,
+                    var(--gold-l),
+                    var(--gold-d)
+                );
+                border-radius: 2px;
+            }
+            .tassel__head {
+                width: 2.4vmin;
+                height: 3.4vmin;
+                margin: -0.3vmin auto 0;
+                border-radius: 40% 40% 50% 50% / 30% 30% 70% 70%;
+                background:
+                    repeating-linear-gradient(
+                        90deg,
+                        rgba(0, 0, 0, 0.18) 0 1.5px,
+                        transparent 1.5px 3px
+                    ),
+                    linear-gradient(
+                        180deg,
+                        var(--gold-l),
+                        var(--gold) 45%,
+                        var(--gold-d)
+                    );
+                box-shadow:
+                    0 3px 8px rgba(0, 0, 0, 0.5),
+                    inset 0 2px 2px rgba(255, 255, 255, 0.4);
+            }
+
+            /* ===== Open button ===== */
+            .open-btn {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 30;
+                padding: 0.85em 2.6em;
+                font-family: inherit;
+                font-size: clamp(1.1rem, 3.2vw, 2rem);
+                letter-spacing: 0.22em;
+                text-transform: uppercase;
+                color: #2a1e00;
+                cursor: pointer;
+                border: none;
+                border-radius: 999px;
+                background: linear-gradient(
+                    180deg,
+                    var(--gold-hi),
+                    var(--gold-l) 40%,
+                    var(--gold) 70%,
+                    var(--gold-d)
+                );
+                box-shadow:
+                    0 6px 22px rgba(0, 0, 0, 0.55),
+                    inset 0 2px 2px rgba(255, 255, 255, 0.7),
+                    inset 0 -3px 6px rgba(120, 86, 10, 0.6);
+                transition:
+                    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+                    opacity 0.5s ease,
+                    box-shadow 0.3s ease;
+                animation: btnGlow 2.6s ease-in-out infinite;
+            }
+            .open-btn:hover {
+                transform: translate(-50%, -50%) scale(1.06);
+            }
+            .open-btn:active {
+                transform: translate(-50%, -50%) scale(0.97);
+            }
+            .open-btn:focus-visible {
+                outline: 3px solid var(--gold-hi);
+                outline-offset: 4px;
+            }
+            .open-btn.hide {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.55);
+                pointer-events: none;
+                animation: none;
+            }
+
+            /* =========================================================================
+     IDLE MOTION — subtle, so the closed curtain feels alive (not static)
+     ========================================================================= */
+            /* whole-drape sway — subtle, organic (3 stops so it isn't a flat back-and-forth);
+     JS randomizes each panel's duration/delay so the two halves drift out of sync */
+            @keyframes drapeSway {
+                0% {
+                    transform: translateX(-0.34%) rotate(-0.24deg);
+                }
+                45% {
+                    transform: translateX(0.12%) rotate(0.14deg);
+                }
+                100% {
+                    transform: translateX(0.38%) rotate(0.26deg);
+                }
+            }
+            /* per-fold micro-breathing — tiny, randomized amplitude/timing per fold */
+            @keyframes foldBreathe {
+                from {
+                    transform: translateX(0) skewX(0deg);
+                }
+                to {
+                    transform: translateX(var(--fold-x, 0))
+                        skewX(var(--fold-k, 0deg));
+                }
+            }
+            @keyframes sheen {
+                0%,
+                100% {
+                    opacity: 0;
+                    transform: translateY(0);
+                }
+                45% {
+                    opacity: 0.55;
+                }
+                100% {
+                    transform: translateY(230%);
+                    opacity: 0;
+                }
+            }
+            @keyframes swing {
+                0% {
+                    transform: rotate(-3.5deg);
+                }
+                100% {
+                    transform: rotate(3.5deg);
+                }
+            }
+            @keyframes btnGlow {
+                0%,
+                100% {
+                    box-shadow:
+                        0 6px 22px rgba(0, 0, 0, 0.55),
+                        inset 0 2px 2px rgba(255, 255, 255, 0.7),
+                        inset 0 -3px 6px rgba(120, 86, 10, 0.6),
+                        0 0 0 rgba(246, 226, 122, 0);
+                }
+                50% {
+                    box-shadow:
+                        0 6px 26px rgba(0, 0, 0, 0.55),
+                        inset 0 2px 2px rgba(255, 255, 255, 0.7),
+                        inset 0 -3px 6px rgba(120, 86, 10, 0.6),
+                        0 0 34px rgba(246, 226, 122, 0.55);
+                }
+            }
+
+            /* =========================================================================
+     OPENING SEQUENCE — anticipation → gather → settle (natural, not mechanical)
+     ========================================================================= */
+            /* One continuous ~5s curve per panel. A single smooth easing (instead of the
+     old staged mid-keyframes) removes the "detached" hitches; the slight y>1 tail
+     lets the gathered fabric drift a hair past rest and settle back — natural. */
+            .stage.is-open .panel.left {
+                animation: openLeft 5s cubic-bezier(0.42, 0, 0.16, 1.045)
+                    forwards;
+            }
+            .stage.is-open .panel.right {
+                animation: openRight 5s cubic-bezier(0.42, 0, 0.16, 1.045)
+                    forwards;
+            }
+            .stage.is-open .banner {
+                animation: bannerIn 5s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+            }
+
+            @keyframes openLeft {
+                0% {
+                    transform: translateX(0) scaleX(1) rotate(0deg);
+                }
+                100% {
+                    transform: translateX(-7%) scaleX(0.16) rotate(-1.6deg);
+                }
+            }
+            @keyframes openRight {
+                0% {
+                    transform: translateX(0) scaleX(1) rotate(0deg);
+                }
+                100% {
+                    transform: translateX(7%) scaleX(0.16) rotate(1.6deg);
+                }
+            }
+            @keyframes bannerIn {
+                0% {
+                    transform: scale(1.08);
+                    filter: brightness(0.55) saturate(0.9);
+                }
+                100% {
+                    transform: scale(1);
+                    filter: brightness(1) saturate(1);
+                }
+            }
+
+            /* =========================================================================
+     Respect users / setups that prefer reduced motion
+     ========================================================================= */
+            @media (prefers-reduced-motion: reduce) {
+                .drape,
+                .fold,
+                .fold::before,
+                .tassel,
+                .open-btn {
+                    animation: none !important;
+                }
+                .stage.is-open .panel.left {
+                    animation: openLeft 1.6s ease forwards;
+                }
+                .stage.is-open .panel.right {
+                    animation: openRight 1.6s ease forwards;
+                }
+                .stage.is-open .banner {
+                    animation: bannerIn 1.6s ease forwards;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="stage" id="stage">
+            <!-- Background banner (revealed once the curtain opens) -->
+            <div class="banner" id="banner"></div>
+
+            <!-- The curtain -->
+            <div class="curtain">
+                <div class="panel left" id="panelLeft">
+                    <div class="drape"></div>
+                </div>
+                <div class="panel right" id="panelRight">
+                    <div class="drape"></div>
+                </div>
+
+                <div class="valance"></div>
+                <div class="tassel l">
+                    <div class="tassel__cord"></div>
+                    <div class="tassel__head"></div>
+                </div>
+                <div class="tassel r">
+                    <div class="tassel__cord"></div>
+                    <div class="tassel__head"></div>
+                </div>
+            </div>
+
+            <!-- The one-shot Open control -->
+            <button class="open-btn" id="openBtn" aria-label="Open the curtain">
+                Open
+            </button>
+        </div>
+
+        <script>
+            (function () {
+                var FOLDS_PER_PANEL = 8;
+
+                function rand(min, max) {
+                    return min + Math.random() * (max - min);
+                }
+
+                // Build the velvet folds into each panel's drape, giving every fold and
+                // every panel slightly different measurements/rhythm so nothing looks
+                // machine-uniform and the closed curtain sways organically.
+                ["panelLeft", "panelRight"].forEach(function (id) {
+                    var drape = document
+                        .getElementById(id)
+                        .querySelector(".drape");
+
+                    // Each half gets its own gentle, out-of-sync sway rhythm.
+                    drape.style.setProperty(
+                        "--sway-t",
+                        rand(8.5, 12).toFixed(2) + "s",
+                    );
+                    drape.style.setProperty(
+                        "--sway-d",
+                        (-rand(0, 5)).toFixed(2) + "s",
+                    );
+
+                    for (var i = 0; i < FOLDS_PER_PANEL; i++) {
+                        var fold = document.createElement("div");
+                        fold.className = "fold";
+                        fold.style.setProperty("--i", i); // staggers the sheen
+                        // Slight per-fold variation (width, light-catch, brightness):
+                        fold.style.flexGrow = rand(0.8, 1.22).toFixed(3);
+                        fold.style.setProperty(
+                            "--ridge",
+                            rand(41, 59).toFixed(1) + "%",
+                        );
+                        fold.style.setProperty(
+                            "--bri",
+                            rand(0.88, 1.09).toFixed(3),
+                        );
+                        // Independent micro-breathing so folds ripple a touch out of step:
+                        fold.style.setProperty(
+                            "--fold-x",
+                            rand(-0.5, 0.5).toFixed(2) + "%",
+                        );
+                        fold.style.setProperty(
+                            "--fold-k",
+                            rand(-0.45, 0.45).toFixed(2) + "deg",
+                        );
+                        fold.style.setProperty(
+                            "--fold-t",
+                            rand(4.5, 7.5).toFixed(2) + "s",
+                        );
+                        fold.style.setProperty(
+                            "--fold-d",
+                            (-rand(0, 4)).toFixed(2) + "s",
+                        );
+                        drape.appendChild(fold);
+                    }
+                });
+
+                // One-shot: open the curtain and retire the button.
+                var stage = document.getElementById("stage");
+                var btn = document.getElementById("openBtn");
+                var opened = false;
+
+                btn.addEventListener("click", function () {
+                    if (opened) return; // guard against double-fire
+                    opened = true;
+                    stage.classList.add("is-open"); // triggers the opening sequence
+                    btn.classList.add("hide"); // fade the button away
+                    btn.disabled = true;
+                    // Fully remove the button after it has faded out.
+                    setTimeout(function () {
+                        btn.remove();
+                    }, 700);
+                });
+            })();
+        </script>
+    </body>
 </html>
