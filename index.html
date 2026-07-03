@@ -33,11 +33,12 @@
                 --em-mid: #12543a;
                 --em-ridge: #2a8f63;
                 --em-hi: #45b985;
-                /* Gold trim */
-                --gold-d: #8a6a1b;
-                --gold: #d4af37;
-                --gold-l: #f6e27a;
-                --gold-hi: #fff6c8;
+                /* Nepal-flag crimson trim (deep) — flag crimson is #DC143C;
+                   sat into the light-catch, body sits a shade darker */
+                --trim-d: #38070f;
+                --trim: #7d0f21;
+                --trim-l: #b81430;
+                --trim-hi: #dc5468;
             }
 
             * {
@@ -84,7 +85,7 @@
             .banner__title {
                 font-size: clamp(2.4rem, 9vw, 8rem);
                 letter-spacing: 0.06em;
-                color: var(--gold-l);
+                color: var(--trim-l);
                 text-shadow:
                     0 2px 30px rgba(0, 0, 0, 0.6),
                     0 0 2px rgba(0, 0, 0, 0.5);
@@ -94,7 +95,7 @@
                 font-size: clamp(0.8rem, 2vw, 1.3rem);
                 letter-spacing: 0.35em;
                 text-transform: uppercase;
-                color: rgba(246, 226, 122, 0.65);
+                color: rgba(240, 180, 190, 0.72);
             }
             .banner__rule {
                 width: min(38vw, 420px);
@@ -103,7 +104,7 @@
                 background: linear-gradient(
                     90deg,
                     transparent,
-                    var(--gold),
+                    var(--trim),
                     transparent
                 );
             }
@@ -168,7 +169,7 @@
                 );
             }
 
-            /* gold braided leading edge (the inner edge that leads the opening) */
+            /* crimson braided leading edge (the inner edge that leads the opening) */
             .panel::after {
                 content: "";
                 position: absolute;
@@ -184,10 +185,10 @@
                     ),
                     linear-gradient(
                         90deg,
-                        var(--gold-d),
-                        var(--gold-l) 45%,
-                        var(--gold) 60%,
-                        var(--gold-d)
+                        var(--trim-d),
+                        var(--trim-l) 45%,
+                        var(--trim) 60%,
+                        var(--trim-d)
                     );
                 box-shadow: 0 0 14px rgba(0, 0, 0, 0.6);
             }
@@ -243,7 +244,7 @@
                 animation-delay: calc(var(--i, 0) * -1.15s);
             }
 
-            /* ===== Valance (gold pelmet across the top) ===== */
+            /* ===== Valance (crimson pelmet across the top) ===== */
             .valance {
                 position: absolute;
                 top: 0;
@@ -253,9 +254,9 @@
                 z-index: 20;
                 background: linear-gradient(
                     180deg,
-                    var(--gold-l) 0%,
-                    var(--gold) 42%,
-                    var(--gold-d) 100%
+                    var(--trim-l) 0%,
+                    var(--trim) 42%,
+                    var(--trim-d) 100%
                 );
                 box-shadow:
                     0 8px 22px rgba(0, 0, 0, 0.5),
@@ -279,7 +280,7 @@
                     );
             }
             .valance::after {
-                /* scalloped gold beads hanging below the valance */
+                /* scalloped crimson beads hanging below the valance */
                 content: "";
                 position: absolute;
                 left: 0;
@@ -288,8 +289,8 @@
                 height: 5vmin;
                 background: radial-gradient(
                     circle at 50% 0,
-                    var(--gold-l) 0 1.1vmin,
-                    var(--gold) 1.1vmin 1.7vmin,
+                    var(--trim-l) 0 1.1vmin,
+                    var(--trim) 1.1vmin 1.7vmin,
                     transparent 1.8vmin
                 );
                 background-size: 3.4vmin 5vmin;
@@ -319,8 +320,8 @@
                 margin: 0 auto;
                 background: linear-gradient(
                     180deg,
-                    var(--gold-l),
-                    var(--gold-d)
+                    var(--trim-l),
+                    var(--trim-d)
                 );
                 border-radius: 2px;
             }
@@ -337,9 +338,9 @@
                     ),
                     linear-gradient(
                         180deg,
-                        var(--gold-l),
-                        var(--gold) 45%,
-                        var(--gold-d)
+                        var(--trim-l),
+                        var(--trim) 45%,
+                        var(--trim-d)
                     );
                 box-shadow:
                     0 3px 8px rgba(0, 0, 0, 0.5),
@@ -353,26 +354,32 @@
                 top: 50%;
                 transform: translate(-50%, -50%);
                 z-index: 30;
-                padding: 0.85em 2.6em;
-                font-family: inherit;
-                font-size: clamp(1.1rem, 3.2vw, 2rem);
-                letter-spacing: 0.22em;
-                text-transform: uppercase;
-                color: #2a1e00;
+                padding: 0.8em 1.9em;
+                /* Devanagari-capable stack (macOS / Android-Linux / Windows),
+                   falling back to the Latin serif */
+                font-family:
+                    "Kohinoor Devanagari", "Devanagari Sangam MN",
+                    "Noto Sans Devanagari", "Nirmala UI", "Mangal",
+                    Georgia, serif;
+                font-size: clamp(1.25rem, 3.4vw, 2.15rem);
+                /* small tracking only — wide spacing/uppercase breaks Devanagari shaping */
+                letter-spacing: 0.04em;
+                color: #fff1f2;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
                 cursor: pointer;
                 border: none;
                 border-radius: 999px;
                 background: linear-gradient(
                     180deg,
-                    var(--gold-hi),
-                    var(--gold-l) 40%,
-                    var(--gold) 70%,
-                    var(--gold-d)
+                    var(--trim-hi),
+                    var(--trim-l) 40%,
+                    var(--trim) 70%,
+                    var(--trim-d)
                 );
                 box-shadow:
                     0 6px 22px rgba(0, 0, 0, 0.55),
                     inset 0 2px 2px rgba(255, 255, 255, 0.7),
-                    inset 0 -3px 6px rgba(120, 86, 10, 0.6);
+                    inset 0 -3px 6px rgba(74, 10, 19, 0.6);
                 transition:
                     transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
                     opacity 0.5s ease,
@@ -386,7 +393,7 @@
                 transform: translate(-50%, -50%) scale(0.97);
             }
             .open-btn:focus-visible {
-                outline: 3px solid var(--gold-hi);
+                outline: 3px solid var(--trim-hi);
                 outline-offset: 4px;
             }
             .open-btn.hide {
@@ -450,15 +457,15 @@
                     box-shadow:
                         0 6px 22px rgba(0, 0, 0, 0.55),
                         inset 0 2px 2px rgba(255, 255, 255, 0.7),
-                        inset 0 -3px 6px rgba(120, 86, 10, 0.6),
-                        0 0 0 rgba(246, 226, 122, 0);
+                        inset 0 -3px 6px rgba(74, 10, 19, 0.6),
+                        0 0 0 rgba(184, 20, 48, 0);
                 }
                 50% {
                     box-shadow:
                         0 6px 26px rgba(0, 0, 0, 0.55),
                         inset 0 2px 2px rgba(255, 255, 255, 0.7),
-                        inset 0 -3px 6px rgba(120, 86, 10, 0.6),
-                        0 0 34px rgba(246, 226, 122, 0.55);
+                        inset 0 -3px 6px rgba(74, 10, 19, 0.6),
+                        0 0 34px rgba(184, 20, 48, 0.6);
                 }
             }
 
@@ -556,8 +563,13 @@
             </div>
 
             <!-- The one-shot Open control -->
-            <button class="open-btn" id="openBtn" aria-label="Open the curtain">
-                Open
+            <button
+                class="open-btn"
+                id="openBtn"
+                lang="ne"
+                aria-label="समुद्घाटन — open the curtain"
+            >
+                समुद्घाटन
             </button>
         </div>
 
