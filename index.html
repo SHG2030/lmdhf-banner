@@ -252,6 +252,7 @@
                 right: 0;
                 height: 15%;
                 z-index: 20;
+                will-change: transform;
                 background: linear-gradient(
                     180deg,
                     var(--trim-l) 0%,
@@ -263,7 +264,7 @@
                     inset 0 3px 0 rgba(255, 255, 255, 0.35);
             }
             .valance::before {
-                /* soft velvet-green shading so it reads as fabric, not a flat bar */
+                /* soft shading so it reads as fabric, not a flat bar */
                 content: "";
                 position: absolute;
                 inset: 0;
@@ -276,7 +277,7 @@
                     linear-gradient(
                         180deg,
                         transparent 55%,
-                        rgba(74, 52, 10, 0.5)
+                        rgba(45, 5, 12, 0.5)
                     );
             }
             .valance::after {
@@ -305,6 +306,7 @@
                 width: 1.1vmin;
                 z-index: 21;
                 transform-origin: top center;
+                transition: opacity 5s ease 1.6s; /* smooth fade-out on open */
             }
             .tassel.l {
                 left: 9%;
@@ -476,23 +478,36 @@
      old staged mid-keyframes) removes the "detached" hitches; the slight y>1 tail
      lets the gathered fabric drift a hair past rest and settle back — natural. */
             .stage.is-open .panel.left {
-                animation: openLeft 5s cubic-bezier(0.42, 0, 0.16, 1.045)
+                animation: openLeft 15s cubic-bezier(0.42, 0, 0.16, 1.045)
                     forwards;
             }
             .stage.is-open .panel.right {
-                animation: openRight 5s cubic-bezier(0.42, 0, 0.16, 1.045)
+                animation: openRight 15s cubic-bezier(0.42, 0, 0.16, 1.045)
                     forwards;
             }
             .stage.is-open .banner {
-                animation: bannerIn 5s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+                animation: bannerIn 15s cubic-bezier(0.33, 0, 0.2, 1) forwards;
+            }
+            /* The valance (top bar) and tassels are part of the curtain, so they
+               clear away too — otherwise they keep hiding the top of the photo.
+               Valance rises up out of frame; tassels fade as the reveal unfolds. */
+            .stage.is-open .valance {
+                animation: valanceUp 12.5s cubic-bezier(0.42, 0, 0.16, 1) 0.6s
+                    forwards;
+            }
+            .stage.is-open .tassel {
+                opacity: 0;
             }
 
+            /* Panels gather AND sweep fully off each side, so no curtain remains
+               over the edges of the photo once open (-72% × scaleX .14 puts the
+               whole gathered bunch, its tilt and its shadow past the screen edge). */
             @keyframes openLeft {
                 0% {
                     transform: translateX(0) scaleX(1) rotate(0deg);
                 }
                 100% {
-                    transform: translateX(-7%) scaleX(0.16) rotate(-1.6deg);
+                    transform: translateX(-72%) scaleX(0.14) rotate(-1.6deg);
                 }
             }
             @keyframes openRight {
@@ -500,7 +515,7 @@
                     transform: translateX(0) scaleX(1) rotate(0deg);
                 }
                 100% {
-                    transform: translateX(7%) scaleX(0.16) rotate(1.6deg);
+                    transform: translateX(72%) scaleX(0.14) rotate(1.6deg);
                 }
             }
             @keyframes bannerIn {
@@ -511,6 +526,14 @@
                 100% {
                     transform: scale(1);
                     filter: brightness(1) saturate(1);
+                }
+            }
+            @keyframes valanceUp {
+                from {
+                    transform: translateY(0);
+                }
+                to {
+                    transform: translateY(-140%);
                 }
             }
 
@@ -533,6 +556,9 @@
                 }
                 .stage.is-open .banner {
                     animation: bannerIn 1.6s ease forwards;
+                }
+                .stage.is-open .valance {
+                    animation: valanceUp 1.6s ease forwards;
                 }
             }
         </style>
